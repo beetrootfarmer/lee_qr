@@ -2,15 +2,89 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>안내</title>
   <style>
-    body { margin: 0; background-color: #fbefe0; display: flex; justify-content: center; align-items: center; height: 100vh; height: 100dvh; overflow: hidden; }
-    img { display: block; max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; height: 100%; }
+    body {
+      background-color: #fbefe0;
+      height: 100vh;
+      height: 100dvh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+    }
+
+    /* 상단 진행 바 */
+    .progress {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 6px;
+      background: rgba(120, 72, 40, 0.15);
+      z-index: 10;
+    }
+    .progress-fill {
+      height: 100%;
+      width: 0;
+      background: #e8894f;
+    }
+    .progress-fill.running {
+      width: 100%;
+      transition: width 5s linear;
+    }
+
+    .image-wrap {
+      flex: 1;
+      min-height: 0;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 14px 12px 8px;
+    }
+    img {
+      display: block;
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+
+    .actions {
+      width: 100%;
+      max-width: 480px;
+      padding: 8px 16px calc(16px + env(safe-area-inset-bottom));
+    }
+    .go-button {
+      display: block;
+      width: 100%;
+      padding: 16px;
+      border: 0;
+      border-radius: 14px;
+      background: #d9663a;
+      color: #fff;
+      font-size: 1.15rem;
+      font-weight: 700;
+      text-align: center;
+      text-decoration: none;
+      box-shadow: 0 6px 16px rgba(160, 70, 30, 0.25);
+      -webkit-tap-highlight-color: transparent;
+    }
+    .go-button:active { transform: scale(0.98); }
   </style>
 </head>
 <body>
-  <img id="introImage" src="image.png" alt="안내 이미지">
+  <div class="progress"><div class="progress-fill" id="progressFill"></div></div>
+
+  <div class="image-wrap">
+    <img id="introImage" src="image.png" alt="안내 이미지">
+  </div>
+
+  <div class="actions">
+    <a class="go-button" id="goButton" href="#">설문 바로가기 →</a>
+  </div>
 
   <script>
     var FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSdy9w-aN8FgwZO-ulbGoV-FP9E6t23JjLFBIUkcvKKVpxohaw/viewform";
@@ -24,15 +98,26 @@
       window.location.replace(FORM_URL);
     }
 
-    // 이미지가 화면에 뜬 시점부터 5초 보여준 뒤 구글폼으로 이동
+    // 버튼: 누르면 바로 설문으로 이동
+    var button = document.getElementById('goButton');
+    button.href = FORM_URL;
+    button.addEventListener('click', function (e) {
+      e.preventDefault();
+      goToForm();
+    });
+
+    // 이미지가 화면에 뜬 시점부터 진행 바를 채우고 5초 뒤 설문으로 이동
     function startTimer() {
       if (started) return;
       started = true;
+      var fill = document.getElementById('progressFill');
+      fill.getBoundingClientRect(); // 애니메이션이 0%부터 시작하도록 강제
+      fill.classList.add('running');
       setTimeout(goToForm, SHOW_MS);
     }
 
     var img = document.getElementById('introImage');
-    if (img.complete) startTimer();
+    if (img.complete && img.naturalWidth > 0) startTimer();
     img.addEventListener('load', startTimer);
     img.addEventListener('error', goToForm);
 
