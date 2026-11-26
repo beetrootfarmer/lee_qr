@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>안내 영상</title>
+  <style>
+    body { margin: 0; background-color: #000; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
+    video { width: 100%; max-width: 600px; height: auto; }
+  </style>
+</head>
+<body>
+  <!-- 스마트폰 자동재생을 위해 muted(음소거)와 playsinline 필수 -->
+  <video id="introVideo" src="video.mp4" autoplay muted playsinline></video>
+
+  <script>
+    var FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSchhMI72U6P_SUgJCwoDhi4JBnGqNOq9fy2a3O-8hEHHjHeRg/viewform?usp=dialog";
+    var moved = false;
+    function goToForm() {
+      if (moved) return;
+      moved = true;
+      window.location.replace(FORM_URL);
+    }
+
+    // 영상이 끝나면 바로 구글폼으로 이동
+    document.getElementById('introVideo').addEventListener('ended', goToForm);
+
+    // 자동재생이 막히거나 영상이 안 나와도 8초 뒤에는 이동 (안전장치)
+    setTimeout(goToForm, 8000);
+  </script>
+</body>
+</html>
