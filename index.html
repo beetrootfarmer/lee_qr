@@ -25,8 +25,8 @@
     // 영상이 끝나면 바로 구글폼으로 이동
     document.getElementById('introVideo').addEventListener('ended', goToForm);
 
-    // 자동재생이 막히거나 영상이 안 나와도 8초 뒤에는 이동 (안전장치)
-    setTimeout(goToForm, 8000);
+    // 자동재생이 막히거나 영상이 안 나와도 25초 뒤에는 이동 (안전장치, 영상 길이보다 길게)
+    setTimeout(goToForm, 25000);
   </script>
 </body>
 </html>
